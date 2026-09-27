@@ -18,7 +18,7 @@ passport.use(
 
         const validPassword = await bcrypt.compare(password, user.password);
 
-        if (validPassword) {
+        if (!validPassword) {
           return done(null, false, { message: "invalid password." });
         }
 
@@ -39,6 +39,8 @@ passport.deserializeUser(async (id, done) => {
     const user = await prisma.user.findUnique({
       where: { id },
     });
+
+    done(null, user);
   } catch (error) {
     done(error);
   }
