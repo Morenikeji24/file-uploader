@@ -2,32 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Login</title>
   </head>
   <body>
-    <form action="/login" method="post">
-      <label for="email"></label>
-      <input
-        type="email"
-        name="email"
-        id="email"
-        placeholder="Email"
-        required
-      />
+    <h1>Login</h1>
 
-      <label for="password"></label>
-      <input
-        type="password"
-        name="password"
-        id="password"
-        placeholder="Password"
-        required
-      />
+    <form action="/login" method="POST">
+      <div>
+        <label>Email</label>
+        <input type="email" name="email" required />
+      </div>
+
+      <div>
+        <label>Password</label>
+        <input type="password" name="password" required />
+      </div>
+
       <button type="submit">Login</button>
     </form>
 
-    <p>Not a registered user?</p>
-    <a href="/sign-up">Sign up</a>
+    <a href="/sign-up">Create account</a>
   </body>
 </html>

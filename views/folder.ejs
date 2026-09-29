@@ -2,18 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Drive</title>
+  <title><%= folder.name %></title>
 </head>
 <body>
-  <h1>My Drive</h1>
+  <a href="/">← Back</a>
 
-  <form action="/logout" method="POST">
-    <button type="submit">Logout</button>
-  </form>
+  <h1><%= folder.name %></h1>
 
   <hr>
 
-  <h2>Create Folder</h2>
+  <h2>Create Subfolder</h2>
 
   <form action="/folders" method="POST">
     <input
@@ -23,8 +21,14 @@
       required
     >
 
+    <input
+      type="hidden"
+      name="parentId"
+      value="<%= folder.id %>"
+    >
+
     <button type="submit">
-      Create Folder
+      Create
     </button>
   </form>
 
@@ -33,7 +37,7 @@
   <h2>Upload File</h2>
 
   <form
-    action="/upload"
+    action="/folders/<%= folder.id %>/upload"
     method="POST"
     enctype="multipart/form-data"
   >
@@ -52,34 +56,34 @@
 
   <h2>Folders</h2>
 
-  <% if (folders && folders.length > 0) { %>
+  <% if (folder.children.length > 0) { %>
     <ul>
-      <% folders.forEach(folder => { %>
+      <% folder.children.forEach(child => { %>
         <li>
-          <a href="/folders/<%= folder.id %>">
-            📁 <%= folder.name %>
+          <a href="/folders/<%= child.id %>">
+            📁 <%= child.name %>
           </a>
         </li>
       <% }) %>
     </ul>
   <% } else { %>
-    <p>No folders yet.</p>
+    <p>No subfolders.</p>
   <% } %>
 
   <hr>
 
   <h2>Files</h2>
 
-  <% if (files && files.length > 0) { %>
+  <% if (folder.files.length > 0) { %>
     <ul>
-      <% files.forEach(file => { %>
+      <% folder.files.forEach(file => { %>
         <li>
           📄 <%= file.filename %>
         </li>
       <% }) %>
     </ul>
   <% } else { %>
-    <p>No files yet.</p>
+    <p>No files.</p>
   <% } %>
 </body>
 </html>
