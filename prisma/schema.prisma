@@ -33,6 +33,11 @@ model Folder {
   files File[]
 
   createdAt DateTime @default(now())
+
+  parentId Int?
+  parent   Folder? @relation("FolderHierarchy", fields: [parentId], references: [id])
+
+  children Folder[] @relation("FolderHierarchy")
 }
 
 model File {
