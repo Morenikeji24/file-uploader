@@ -22,7 +22,7 @@ const fileController = {
         filename: "asc",
       },
     });
-    res.render("index", { folders, files });
+    res.render("index", { folders, files, error: req.query.error });
   },
 
   async uploadFile(req, res) {
@@ -125,7 +125,7 @@ const fileController = {
         return res.status(404).send("Folder not found");
       }
 
-      res.render("folder", { folder });
+      res.render("folder", { folder, error: req.query.error });
     } catch (error) {
       console.log(error);
       res.status(500).send("Failed to find folder");
