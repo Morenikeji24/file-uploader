@@ -94,5 +94,23 @@
   <% } else { %>
     <p>No files.</p>
   <% } %>
+
+  <hr>
+
+<h2>Share Folder</h2>
+
+<form action="/folders/<%= folder.id %>/share" method="POST">
+  <label for="duration">Link expires after:</label>
+
+  <select name="duration" id="duration" required>
+    <option value="1">1 day</option>
+    <option value="3">3 days</option>
+    <option value="7">7 days</option>
+    <option value="10">10 days</option>
+    <option value="30">30 days</option>
+  </select>
+
+  <button type="submit">Create Share Link</button>
+</form>
 </body>
 </html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Folder Shared</title>
+  </head>
+  <body>
+    <h1>Folder shared</h1>
+
+    <p>
+      <strong><%= folder.name %></strong>
+      can now be accessed using this link.
+    </p>
+
+    <p>Expires: <%= shareExpiresAt.toLocaleString() %></p>
+
+    <input type="text" value="<%= shareUrl %>" readonly />
+
+    <button onclick="navigator.clipboard.writeText('<%= shareUrl %>')">
+      Copy Link
+    </button>
+
+    <p>
+      <a href="/folders/<%= folder.id %>"> Back to folder </a>
+    </p>
+  </body>
+</html>
