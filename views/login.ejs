@@ -2,25 +2,55 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Login - Drive</title>
+
+    <link rel="stylesheet" href="/styles.css" />
   </head>
-  <body>
-    <h1>Login</h1>
 
-    <form action="/login" method="POST">
-      <div>
-        <label>Email</label>
-        <input type="email" name="email" required />
+  <body class="auth-page">
+    <main class="auth-container">
+      <div class="auth-card">
+        <a href="/login" class="auth-logo"> ◈ Drive </a>
+
+        <h1>Welcome back</h1>
+
+        <p class="auth-subtitle">Sign in to access your files and folders.</p>
+
+        <form action="/login" method="POST" class="auth-form">
+          <div class="form-group">
+            <label for="email"> Email </label>
+
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@example.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password"> Password </label>
+
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          <button type="submit" class="button auth-button">Log in</button>
+        </form>
+
+        <p class="auth-footer">
+          Don't have an account?
+          <a href="/sign-up">Create one</a>
+        </p>
       </div>
-
-      <div>
-        <label>Password</label>
-        <input type="password" name="password" required />
-      </div>
-
-      <button type="submit">Login</button>
-    </form>
-
-    <a href="/sign-up">Create account</a>
+    </main>
   </body>
 </html>

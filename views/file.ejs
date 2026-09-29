@@ -2,30 +2,76 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title><%= file.filename %></title>
+
+    <link rel="stylesheet" href="/styles.css" />
   </head>
+
   <body>
-    <a href="/">← Back to My Drive</a>
+    <header class="topbar">
+      <a href="/" class="logo"> ◈ Drive </a>
 
-    <h1><%= file.filename %></h1>
+      <div class="topbar-right">
+        <span> <%= currentUser.email %> </span>
 
-    <p>
-      <strong>Name:</strong>
-      <%= file.filename %>
-    </p>
+        <form action="/logout" method="POST">
+          <button class="logout-button" type="submit">Logout</button>
+        </form>
+      </div>
+    </header>
 
-    <p>
-      <strong>Size:</strong>
-      <%= file.size %> bytes
-    </p>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-title">Workspace</div>
 
-    <p>
-      <strong>Uploaded:</strong>
-      <%= file.createdAt.toLocaleString() %>
-    </p>
+        <a href="/" class="sidebar-link"> 🏠 My Drive </a>
+      </aside>
 
-    <a href="<%= file.filepath %>" download>
-      <button>Download</button>
-    </a>
+      <main class="main-content">
+        <a href="/" class="sidebar-link"> ← Back to My Drive </a>
+
+        <div class="page-header">
+          <div>
+            <h1>📄 <%= file.filename %></h1>
+            <p>File details</p>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <div class="file-details">
+            <div class="detail-row">
+              <span>Name</span>
+              <strong><%= file.filename %></strong>
+            </div>
+
+            <div class="detail-row">
+              <span>Size</span>
+              <strong><%= file.size %> bytes</strong>
+            </div>
+
+            <div class="detail-row">
+              <span>Uploaded</span>
+              <strong> <%= file.createdAt.toLocaleString() %> </strong>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px">
+            <a href="<%= file.filepath %>" target="_blank" class="button">
+              Open File
+            </a>
+
+            <a
+              href="<%= file.filepath %>"
+              download
+              class="button button-secondary"
+            >
+              Download
+            </a>
+          </div>
+        </div>
+      </main>
+    </div>
   </body>
 </html>

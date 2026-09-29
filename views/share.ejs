@@ -1,27 +1,322 @@
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Folder Shared</title>
-  </head>
-  <body>
-    <h1>Folder shared</h1>
 
-    <p>
-      <strong><%= folder.name %></strong>
-      can now be accessed using this link.
-    </p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <p>Expires: <%= shareExpiresAt.toLocaleString() %></p>
+  <title>Folder Shared</title>
 
-    <input type="text" value="<%= shareUrl %>" readonly />
+  <link rel="stylesheet" href="/styles.css">
+</head>
 
-    <button onclick="navigator.clipboard.writeText('<%= shareUrl %>')">
-      Copy Link
-    </button>
+<body>
 
-    <p>
-      <a href="/folders/<%= folder.id %>"> Back to folder </a>
-    </p>
-  </body>
+  <header class="topbar">
+
+    <a href="/" class="logo">
+      ◈ Drive
+    </a>
+
+  </header>
+
+
+  <main class="main-content">
+
+    <div class="form-card share-card">
+
+      <div class="share-icon">
+        🔗
+      </div>
+
+      <h1>Folder shared</h1>
+
+      <p>
+        <strong><%= folder.name %></strong>
+        can now be accessed by anyone with this link.
+      </p>
+
+
+      <div class="share-expiry">
+
+        <span>Link expires</span>
+
+        <strong>
+          <%= shareExpiresAt.toLocaleString() %>
+        </strong>
+
+      </div>
+
+
+      <div class="share-link">
+
+        <input
+          type="text"
+          value="<%= shareUrl %>"
+          readonly
+          id="shareUrl"
+        >
+
+        <button
+          class="button"
+          type="button"
+          onclick="copyLink()"
+        >
+          Copy
+        </button>
+
+      </div>
+
+
+      <p id="copyMessage" class="copy-message"></p>
+
+
+      <a
+        href="/folders/<%= folder.id %>"
+        class="button button-secondary"
+      >
+        Back to folder
+      </a>
+
+    </div>
+
+  </main>
+
+
+  <script>
+    function copyLink() {
+      const input = document.getElementById("shareUrl");
+
+      navigator.clipboard.writeText(input.value);
+
+      document.getElementById("copyMessage").textContent =
+        "Link copied!";
+    }
+  </script>
+
+</body>
+</html>
+```
+
+Add:
+
+```css id="x9v2km"
+.share-card {
+  max-width: 650px;
+  margin: 80px auto;
+  text-align: center;
+}
+
+.share-card h1 {
+  margin-bottom: 10px;
+}
+
+.share-icon {
+  font-size: 42px;
+  margin-bottom: 12px;
+}
+
+.share-expiry {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 14px 16px;
+  margin: 24px 0;
+
+  background: #f8fafc;
+  border-radius: 8px;
+
+  text-align: left;
+}
+
+.share-expiry span {
+  color: #64748b;
+}
+
+.share-link {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.share-link input {
+  flex: 1;
+  max-width: none;
+}
+
+.copy-message {
+  height: 20px;
+  margin: 4px 0 20px;
+
+  font-size: 14px;
+  color: #16a34a;
+}
+```
+
+---
+
+### `shared-folder.ejs`
+
+This is the **public/unauthenticated** page, so it gets a slightly different header.
+
+```ejs
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title><%= folder.name %></title>
+
+  <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+
+  <header class="topbar">
+
+    <a href="/" class="logo">
+      ◈ Drive
+    </a>
+
+    <span class="shared-badge">
+      Shared folder
+    </span>
+
+  </header>
+
+
+  <main class="main-content shared-content">
+
+    <% if (folder.id !== rootFolder.id) { %>
+
+      <a
+        href="/share/folders/<%= token %>"
+        class="sidebar-link"
+      >
+        ← Back to shared folder
+      </a>
+
+    <% } %>
+
+
+    <div class="page-header">
+
+      <div>
+
+        <h1>
+          📁 <%= folder.name %>
+        </h1>
+
+        <p>
+          Shared with anyone who has this link.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- Folders -->
+
+    <section class="section">
+
+      <div class="section-header">
+        <h2>Folders</h2>
+      </div>
+
+      <% if (folder.children.length > 0) { %>
+
+        <div class="folder-grid">
+
+          <% folder.children.forEach(child => { %>
+
+            <a
+              href="/share/folders/<%= token %>/<%= child.id %>"
+              class="folder-card"
+            >
+
+              <div class="folder-icon">
+                📁
+              </div>
+
+              <div class="folder-name">
+                <%= child.name %>
+              </div>
+
+            </a>
+
+          <% }) %>
+
+        </div>
+
+      <% } else { %>
+
+        <div class="empty-state">
+          No subfolders.
+        </div>
+
+      <% } %>
+
+    </section>
+
+
+    <!-- Files -->
+
+    <section class="section">
+
+      <div class="section-header">
+        <h2>Files</h2>
+      </div>
+
+      <% if (folder.files.length > 0) { %>
+
+        <div class="file-list">
+
+          <% folder.files.forEach(file => { %>
+
+            <a
+              href="<%= file.filepath %>"
+              target="_blank"
+              class="file-row"
+            >
+
+              <div class="file-icon">
+                📄
+              </div>
+
+              <div class="file-info">
+
+                <span class="file-name">
+                  <%= file.filename %>
+                </span>
+
+                <span class="file-size">
+                  <%= file.size %> bytes
+                </span>
+
+              </div>
+
+            </a>
+
+          <% }) %>
+
+        </div>
+
+      <% } else { %>
+
+        <div class="empty-state">
+          No files in this folder.
+        </div>
+
+      <% } %>
+
+    </section>
+
+  </main>
+
+</body>
 </html>

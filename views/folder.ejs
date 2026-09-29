@@ -1,116 +1,296 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title><%= folder.name %></title>
+
+  <link rel="stylesheet" href="/styles.css">
 </head>
+
 <body>
-  <a href="/">← Back</a>
 
-  <h1><%= folder.name %></h1>
+  <header class="topbar">
 
-  <hr>
+    <a href="/" class="logo">
+      ◈ Drive
+    </a>
 
-  <h2>Create Subfolder</h2>
+    <div class="topbar-right">
 
-  <form action="/folders" method="POST">
-    <input
-      type="text"
-      name="name"
-      placeholder="Folder name"
-      required
-    >
+      <span>
+        <%= currentUser.email %>
+      </span>
 
-    <input
-      type="hidden"
-      name="parentId"
-      value="<%= folder.id %>"
-    >
+      <form action="/logout" method="POST">
+        <button class="logout-button" type="submit">
+          Logout
+        </button>
+      </form>
 
-    <button type="submit">
-      Create
-    </button>
-  </form>
+    </div>
 
-  <hr>
+  </header>
 
-  <h2>Upload File</h2>
 
-  <% if (error) { %>
-  <div class="upload-error">
-    <%= error %>
+  <div class="app-layout">
+
+    <aside class="sidebar">
+
+      <div class="sidebar-title">
+        Workspace
+      </div>
+
+      <a href="/" class="sidebar-link">
+        🏠 My Drive
+      </a>
+
+    </aside>
+
+
+    <main class="main-content">
+
+      <a href="/" class="sidebar-link">
+        ← Back to My Drive
+      </a>
+
+
+      <div class="page-header">
+
+        <div>
+          <h1>📁 <%= folder.name %></h1>
+          <p>Manage the contents of this folder.</p>
+        </div>
+
+      </div>
+
+
+      <!-- Create subfolder -->
+
+      <div class="form-card">
+
+        <h2>Create a subfolder</h2>
+
+        <form action="/folders" method="POST">
+
+          <input
+            type="hidden"
+            name="parentId"
+            value="<%= folder.id %>"
+          >
+
+          <div class="form-row">
+
+            <input
+              type="text"
+              name="name"
+              placeholder="Folder name"
+              required
+            >
+
+            <button class="button" type="submit">
+              + Create Folder
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <!-- Upload -->
+
+      <div class="form-card">
+
+        <h2>Upload a file</h2>
+
+        <% if (error) { %>
+
+          <div class="upload-error">
+            <%= error %>
+          </div>
+
+        <% } %>
+
+        <form
+          action="/folders/<%= folder.id %>/upload"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+
+          <div class="form-row">
+
+            <input
+              type="file"
+              name="file"
+              required
+            >
+
+            <button class="button" type="submit">
+              Upload
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <!-- Share -->
+
+      <div class="form-card">
+
+        <h2>Share this folder</h2>
+
+        <p>
+          Create a link that lets anyone view this folder and its contents.
+        </p>
+
+        <form
+          action="/folders/<%= folder.id %>/share"
+          method="POST"
+        >
+
+          <div class="form-row">
+
+            <select name="duration" required>
+
+              <option value="1">
+                1 day
+              </option>
+
+              <option value="3">
+                3 days
+              </option>
+
+              <option value="7">
+                7 days
+              </option>
+
+              <option value="10">
+                10 days
+              </option>
+
+              <option value="30">
+                30 days
+              </option>
+
+            </select>
+
+            <button class="button" type="submit">
+              Create Share Link
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <!-- Folders -->
+
+      <section class="section">
+
+        <div class="section-header">
+          <h2>Folders</h2>
+        </div>
+
+        <% if (folder.children.length > 0) { %>
+
+          <div class="folder-grid">
+
+            <% folder.children.forEach(child => { %>
+
+              <a
+                href="/folders/<%= child.id %>"
+                class="folder-card"
+              >
+
+                <div class="folder-icon">
+                  📁
+                </div>
+
+                <div class="folder-name">
+                  <%= child.name %>
+                </div>
+
+              </a>
+
+            <% }) %>
+
+          </div>
+
+        <% } else { %>
+
+          <div class="empty-state">
+            No subfolders yet.
+          </div>
+
+        <% } %>
+
+      </section>
+
+
+      <!-- Files -->
+
+      <section class="section">
+
+        <div class="section-header">
+          <h2>Files</h2>
+        </div>
+
+        <% if (folder.files.length > 0) { %>
+
+          <div class="file-list">
+
+            <% folder.files.forEach(file => { %>
+
+              <a
+                href="/files/<%= file.id %>"
+                class="file-row"
+              >
+
+                <div class="file-icon">
+                  📄
+                </div>
+
+                <div class="file-info">
+
+                  <span class="file-name">
+                    <%= file.filename %>
+                  </span>
+
+                  <span class="file-size">
+                    <%= file.size %> bytes
+                  </span>
+
+                </div>
+
+              </a>
+
+            <% }) %>
+
+          </div>
+
+        <% } else { %>
+
+          <div class="empty-state">
+            No files in this folder.
+          </div>
+
+        <% } %>
+
+      </section>
+
+    </main>
+
   </div>
-<% } %>
 
-  <form
-    action="/folders/<%= folder.id %>/upload"
-    method="POST"
-    enctype="multipart/form-data"
-  >
-    <input
-      type="file"
-      name="file"
-      required
-    >
-
-    <button type="submit">
-      Upload
-    </button>
-  </form>
-
-  <hr>
-
-  <h2>Folders</h2>
-
-  <% if (folder.children.length > 0) { %>
-    <ul>
-      <% folder.children.forEach(child => { %>
-        <li>
-          <a href="/folders/<%= child.id %>">
-            📁 <%= child.name %>
-          </a>
-        </li>
-      <% }) %>
-    </ul>
-  <% } else { %>
-    <p>No subfolders.</p>
-  <% } %>
-
-  <hr>
-
-  <h2>Files</h2>
-
-  <% if (folder.files.length > 0) { %>
-    <ul>
-      <% folder.files.forEach(file => { %>
-        <li>
-  📄
-  <a href="/files/<%= file.id %>">
-    <%= file.filename %>
-  </a>
-</li>
-      <% }) %>
-    </ul>
-  <% } else { %>
-    <p>No files.</p>
-  <% } %>
-
-  <hr>
-
-<h2>Share Folder</h2>
-
-<form action="/folders/<%= folder.id %>/share" method="POST">
-  <label for="duration">Link expires after:</label>
-
-  <select name="duration" id="duration" required>
-    <option value="1">1 day</option>
-    <option value="3">3 days</option>
-    <option value="7">7 days</option>
-    <option value="10">10 days</option>
-    <option value="30">30 days</option>
-  </select>
-
-  <button type="submit">Create Share Link</button>
-</form>
 </body>
 </html>

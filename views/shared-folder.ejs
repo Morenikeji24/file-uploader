@@ -1,71 +1,159 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title><%= folder.name %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title><%= folder.name %> - Shared Folder</title>
+
+  <link rel="stylesheet" href="/styles.css">
 </head>
 
 <body>
 
-  <h1>📁 <%= folder.name %></h1>
+  <header class="topbar">
 
-  <p>This folder has been shared with you.</p>
-
-  <% if (folder.id !== rootFolder.id) { %>
-    <a href="/share/folders/<%= token %>">
-      ← Back to shared folder
+    <a href="/" class="logo">
+      ◈ Drive
     </a>
-  <% } %>
 
-  <hr>
+    <span class="shared-badge">
+      Shared folder
+    </span>
 
-  <h2>Folders</h2>
-
-  <% if (folder.children.length > 0) { %>
-
-    <ul>
-      <% folder.children.forEach(child => { %>
-        <li>
-          📁
-
-          <a href="/share/folders/<%= token %>/<%= child.id %>">
-            <%= child.name %>
-          </a>
-        </li>
-      <% }) %>
-    </ul>
-
-  <% } else { %>
-
-    <p>No subfolders.</p>
-
-  <% } %>
+  </header>
 
 
-  <h2>Files</h2>
+  <main class="main-content shared-content">
 
-  <% if (folder.files.length > 0) { %>
+    <% if (folder.id !== rootFolder.id) { %>
 
-    <ul>
-      <% folder.files.forEach(file => { %>
-        <li>
-          📄
+      <a
+        href="/share/folders/<%= token %>"
+        class="back-link"
+      >
+        ← Back to shared folder
+      </a>
 
-          <a
-            href="<%= file.filepath %>"
-            target="_blank"
-          >
-            <%= file.filename %>
-          </a>
-        </li>
-      <% }) %>
-    </ul>
+    <% } %>
 
-  <% } else { %>
 
-    <p>No files.</p>
+    <div class="page-header">
 
-  <% } %>
+      <div>
+
+        <h1>
+          📁 <%= folder.name %>
+        </h1>
+
+        <p>
+          Shared with anyone who has this link.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- Folders -->
+
+    <section class="section">
+
+      <div class="section-header">
+        <h2>Folders</h2>
+      </div>
+
+      <% if (folder.children.length > 0) { %>
+
+        <div class="folder-grid">
+
+          <% folder.children.forEach(child => { %>
+
+            <a
+              href="/share/folders/<%= token %>/<%= child.id %>"
+              class="folder-card"
+            >
+
+              <div class="folder-icon">
+                📁
+              </div>
+
+              <div class="folder-name">
+                <%= child.name %>
+              </div>
+
+            </a>
+
+          <% }) %>
+
+        </div>
+
+      <% } else { %>
+
+        <div class="empty-state">
+          No subfolders.
+        </div>
+
+      <% } %>
+
+    </section>
+
+
+    <!-- Files -->
+
+    <section class="section">
+
+      <div class="section-header">
+        <h2>Files</h2>
+      </div>
+
+      <% if (folder.files.length > 0) { %>
+
+        <div class="file-list">
+
+          <% folder.files.forEach(file => { %>
+
+            <a
+              href="<%= file.filepath %>"
+              target="_blank"
+              class="file-row"
+            >
+
+              <div class="file-icon">
+                📄
+              </div>
+
+              <div class="file-info">
+
+                <span class="file-name">
+                  <%= file.filename %>
+                </span>
+
+                <span class="file-size">
+                  <%= file.size %> bytes
+                </span>
+
+              </div>
+
+            </a>
+
+          <% }) %>
+
+        </div>
+
+      <% } else { %>
+
+        <div class="empty-state">
+          No files in this folder.
+        </div>
+
+      <% } %>
+
+    </section>
+
+  </main>
 
 </body>
 </html>

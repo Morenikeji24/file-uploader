@@ -1,94 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Drive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>My Drive</title>
+
+  <link rel="stylesheet" href="/styles.css">
 </head>
+
 <body>
-  <h1>My Drive</h1>
 
-  <form action="/logout" method="POST">
-    <button type="submit">Logout</button>
-  </form>
+  <header class="topbar">
 
-  <hr>
+    <a href="/" class="logo">
+      ◈ Drive
+    </a>
 
-  <h2>Create Folder</h2>
+    <div class="topbar-right">
 
-  <form action="/folders" method="POST">
-    <input
-      type="text"
-      name="name"
-      placeholder="Folder name"
-      required
-    >
+      <span>
+        <%= currentUser.email %>
+      </span>
 
-    <button type="submit">
-      Create Folder
-    </button>
-  </form>
+      <form action="/logout" method="POST">
+        <button class="logout-button" type="submit">
+          Logout
+        </button>
+      </form>
 
-  <hr>
+    </div>
 
-  <h2>Upload File</h2>
+  </header>
 
-  <% if (error) { %>
-  <div class="upload-error">
-    <%= error %>
+
+  <div class="app-layout">
+
+    <aside class="sidebar">
+
+      <div class="sidebar-title">
+        Workspace
+      </div>
+
+      <a href="/" class="sidebar-link">
+        🏠 My Drive
+      </a>
+
+    </aside>
+
+
+    <main class="main-content">
+
+      <div class="page-header">
+
+        <div>
+          <h1>My Drive</h1>
+          <p>Manage your files and folders.</p>
+        </div>
+
+      </div>
+
+
+      <!-- Create Folder -->
+
+      <div class="form-card">
+
+        <h2>Create a folder</h2>
+
+        <form action="/folders" method="POST">
+
+          <div class="form-row">
+
+            <input
+              type="text"
+              name="name"
+              placeholder="Folder name"
+              required
+            >
+
+            <button class="button" type="submit">
+              + Create Folder
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <!-- Upload -->
+
+      <div class="form-card">
+
+        <h2>Upload a file</h2>
+
+        <% if (error) { %>
+          <div class="upload-error">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <form
+          action="/upload"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+
+          <div class="form-row">
+
+            <input
+              type="file"
+              name="file"
+              required
+            >
+
+            <button class="button" type="submit">
+              Upload
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <!-- Folders -->
+
+      <section class="section">
+
+        <div class="section-header">
+          <h2>Folders</h2>
+        </div>
+
+        <% if (folders && folders.length > 0) { %>
+
+          <div class="folder-grid">
+
+            <% folders.forEach(folder => { %>
+
+              <a
+                href="/folders/<%= folder.id %>"
+                class="folder-card"
+              >
+
+                <div class="folder-icon">
+                  📁
+                </div>
+
+                <div class="folder-name">
+                  <%= folder.name %>
+                </div>
+
+              </a>
+
+            <% }) %>
+
+          </div>
+
+        <% } else { %>
+
+          <div class="empty-state">
+            No folders yet.
+          </div>
+
+        <% } %>
+
+      </section>
+
+
+      <!-- Files -->
+
+      <section class="section">
+
+        <div class="section-header">
+          <h2>Files</h2>
+        </div>
+
+        <% if (files && files.length > 0) { %>
+
+          <div class="file-list">
+
+            <% files.forEach(file => { %>
+
+              <a
+                href="/files/<%= file.id %>"
+                class="file-row"
+              >
+
+                <div class="file-icon">
+                  📄
+                </div>
+
+                <div class="file-info">
+
+                  <span class="file-name">
+                    <%= file.filename %>
+                  </span>
+
+                  <span class="file-size">
+                    <%= file.size %> bytes
+                  </span>
+
+                </div>
+
+              </a>
+
+            <% }) %>
+
+          </div>
+
+        <% } else { %>
+
+          <div class="empty-state">
+            No files yet.
+          </div>
+
+        <% } %>
+
+      </section>
+
+    </main>
+
   </div>
-<% } %>
 
-  <form
-    action="/upload"
-    method="POST"
-    enctype="multipart/form-data"
-  >
-    <input
-      type="file"
-      name="file"
-      required
-    >
-
-    <button type="submit">
-      Upload
-    </button>
-  </form>
-
-  <hr>
-
-  <h2>Folders</h2>
-
-  <% if (folders && folders.length > 0) { %>
-    <ul>
-      <% folders.forEach(folder => { %>
-        <li>
-          <a href="/folders/<%= folder.id %>">
-            📁 <%= folder.name %>
-          </a>
-        </li>
-      <% }) %>
-    </ul>
-  <% } else { %>
-    <p>No folders yet.</p>
-  <% } %>
-
-  <hr>
-
-  <h2>Files</h2>
-
-  <% if (files && files.length > 0) { %>
-    <ul>
-      <% files.forEach(file => { %>
-        <li>
-  📄
-  <a href="/files/<%= file.id %>">
-    <%= file.filename %>
-  </a>
-</li>
-      <% }) %>
-    </ul>
-  <% } else { %>
-    <p>No files yet.</p>
-  <% } %>
 </body>
 </html>
