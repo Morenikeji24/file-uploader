@@ -25,4 +25,14 @@ router.post(
 );
 router.post("/logout", fileController.logout);
 
+router.post("/folders", requireAuth, fileController.createFolder);
+
+router.get("/folders/:id", requireAuth, fileController.getFolder);
+router.post(
+  "/folders/:id/upload",
+  requireAuth,
+  upload.single("file"),
+  fileController.postIntoFolder,
+);
+
 export default router;
