@@ -26,8 +26,6 @@ const fileController = {
   },
 
   async uploadFile(req, res) {
-    console.log("reached uploadFile");
-    console.log(req.file);
     await prisma.file.create({
       data: {
         filename: req.file.originalname,
@@ -36,8 +34,6 @@ const fileController = {
         userId: req.user.id,
       },
     });
-
-    console.log("file saved");
     res.redirect("/");
   },
 
