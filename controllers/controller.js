@@ -161,6 +161,26 @@ const fileController = {
       res.status(500).send("Failed to upload file");
     }
   },
+
+  async getFile(req, res) {
+    try {
+      const file = await prisma.file.findFirst({
+        where: {
+          id: Number(req.params.id),
+          userId: req.user.id,
+        },
+      });
+
+      if (!file) {
+        return res.status(404).send("File not found");
+      }
+
+      res.render("file", { file });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Failed to find file");
+    }
+  },
 };
 
 export default fileController;
