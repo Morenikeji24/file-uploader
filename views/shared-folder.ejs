@@ -11,54 +11,61 @@
 
   <p>This folder has been shared with you.</p>
 
+  <% if (folder.id !== rootFolder.id) { %>
+    <a href="/share/folders/<%= token %>">
+      ← Back to shared folder
+    </a>
+  <% } %>
+
   <hr>
 
-  <% function renderFolder(folder) { %>
+  <h2>Folders</h2>
 
-    <section>
-      <h2>📁 <%= folder.name %></h2>
+  <% if (folder.children.length > 0) { %>
 
-      <% if (folder.files.length > 0) { %>
+    <ul>
+      <% folder.children.forEach(child => { %>
+        <li>
+          📁
 
-        <h3>Files</h3>
+          <a href="/share/folders/<%= token %>/<%= child.id %>">
+            <%= child.name %>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
 
-        <ul>
-          <% folder.files.forEach(file => { %>
-            <li>
-              📄
-              <a
-                href="<%= file.filepath %>"
-                target="_blank"
-              >
-                <%= file.filename %>
-              </a>
-            </li>
-          <% }) %>
-        </ul>
+  <% } else { %>
 
-      <% } %>
-
-
-      <% if (folder.children.length > 0) { %>
-
-        <h3>Folders</h3>
-
-        <% folder.children.forEach(child => { %>
-
-          <div style="margin-left: 30px;">
-            <% renderFolder(child) %>
-          </div>
-
-        <% }) %>
-
-      <% } %>
-
-    </section>
+    <p>No subfolders.</p>
 
   <% } %>
 
 
-  <% renderFolder(folder) %>
+  <h2>Files</h2>
+
+  <% if (folder.files.length > 0) { %>
+
+    <ul>
+      <% folder.files.forEach(file => { %>
+        <li>
+          📄
+
+          <a
+            href="<%= file.filepath %>"
+            target="_blank"
+          >
+            <%= file.filename %>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+
+  <% } else { %>
+
+    <p>No files.</p>
+
+  <% } %>
 
 </body>
 </html>
