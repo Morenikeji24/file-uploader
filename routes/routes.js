@@ -34,5 +34,6 @@ router.post(
   upload.single("file"),
   fileController.postIntoFolder,
 );
+router.get("/files/:id", requireAuth, fileController.getFile);
 
 export default router;
