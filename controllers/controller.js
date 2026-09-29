@@ -251,28 +251,94 @@ const fileController = {
 
   async viewSharedFolder(req, res) {
     try {
-      const sharedFolder = await prisma.folder.findUnique({
+      const rootFolder = await prisma.folder.findUnique({
+        where: {
+          shareToken: req.params.token,
+        },
+        include: {
+          files: true,
+          children: true,
+        },
+      });
+
+      if (!rootFolder) {
+        return res.status(404).send("Share link not found");
+      }
+
+      if (
+        !rootFolder.shareExpiresAt ||
+        rootFolder.shareExpiresAt < new Date()
+      ) {
+        return res.status(410).send("This share link has expired");
+      }
+
+      res.render("shared-folder", {
+        folder: rootFolder,
+        token: req.params.token,
+        rootFolder,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Failed to load shared folder");
+    }
+  },
+
+  async viewSharedSubfolder(req, res) {
+    try {
+      const rootFolder = await prisma.folder.findUnique({
         where: {
           shareToken: req.params.token,
         },
       });
 
-      if (!sharedFolder) {
+      if (!rootFolder) {
         return res.status(404).send("Share link not found");
       }
 
       if (
-        !sharedFolder.shareExpiresAt ||
-        sharedFolder.shareExpiresAt < new Date()
+        !rootFolder.shareExpiresAt ||
+        rootFolder.shareExpiresAt < new Date()
       ) {
         return res.status(410).send("This share link has expired");
       }
 
-      const folder = await getSharedFolderTree(sharedFolder.id);
-
-      res.render("shared-folder", {
-        folder,
+      const folder = await prisma.folder.findUnique({
+        where: {
+          id: Number(req.params.folderId),
+        },
+        include: {
+          files: true,
+          children: true,
+        },
       });
+
+      if (!folder) {
+        return res.status(404).send("Folder not found");
+      }
+
+      let currentFolder = folder;
+
+      while (currentFolder.parentId !== null) {
+        currentFolder = await prisma.folder.findUnique({
+          where: {
+            id: currentFolder.parentId,
+          },
+        });
+
+        if (!currentFolder) {
+          return res.status(404).send("Folder not found");
+        }
+
+        if (currentFolder.id === rootFolder.id) {
+          return res.render("shared-folder", {
+            folder,
+            token: req.params.token,
+            rootFolder,
+          });
+        }
+      }
+
+      return res.status(403).send("Folder is not part of this share");
     } catch (error) {
       console.log(error);
       res.status(500).send("Failed to load shared folder");
