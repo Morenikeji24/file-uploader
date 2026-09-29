@@ -1,5 +1,28 @@
 import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
+
+async function getSharedFolderTree(folderId) {
+  const folder = await prisma.folder.findUnique({
+    where: {
+      id: folderId,
+    },
+    include: {
+      files: true,
+      children: true,
+    },
+  });
+
+  if (!folder) {
+    return null;
+  }
+
+  folder.children = await Promise.all(
+    folder.children.map((child) => getSharedFolderTree(child.id)),
+  );
+
+  return folder;
+}
 
 const fileController = {
   async getHomePage(req, res) {
@@ -179,6 +202,80 @@ const fileController = {
     } catch (error) {
       console.log(error);
       res.status(500).send("Failed to find file");
+    }
+  },
+
+  async shareFolder(req, res) {
+    try {
+      const folder = await prisma.folder.findFirst({
+        where: {
+          id: Number(req.params.id),
+          userId: req.user.id,
+        },
+      });
+
+      if (!folder) {
+        return res.status(404).send("Folder not found");
+      }
+
+      const duration = Number(req.body.duration);
+
+      if (!duration || duration <= 0) {
+        return res.status(400).send("Invalid duration");
+      }
+
+      const shareToken = crypto.randomBytes(32).toString("hex");
+
+      const shareExpiresAt = new Date(
+        Date.now() + duration * 24 * 60 * 60 * 1000,
+      );
+
+      await prisma.folder.update({
+        where: {
+          id: folder.id,
+        },
+        data: {
+          shareToken,
+          shareExpiresAt,
+        },
+      });
+
+      const shareUrl = `${req.protocol}://${req.get("host")}/share/folders/${shareToken}`;
+
+      res.render("share", { shareUrl, folder, shareExpiresAt });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Failed to create share link");
+    }
+  },
+
+  async viewSharedFolder(req, res) {
+    try {
+      const sharedFolder = await prisma.folder.findUnique({
+        where: {
+          shareToken: req.params.token,
+        },
+      });
+
+      if (!sharedFolder) {
+        return res.status(404).send("Share link not found");
+      }
+
+      if (
+        !sharedFolder.shareExpiresAt ||
+        sharedFolder.shareExpiresAt < new Date()
+      ) {
+        return res.status(410).send("This share link has expired");
+      }
+
+      const folder = await getSharedFolderTree(sharedFolder.id);
+
+      res.render("shared-folder", {
+        folder,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Failed to load shared folder");
     }
   },
 };
