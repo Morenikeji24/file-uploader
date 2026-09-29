@@ -70,5 +70,9 @@ router.post(
 router.get("/files/:id", requireAuth, fileController.getFile);
 router.post("/folders/:id/share", requireAuth, fileController.shareFolder);
 router.get("/share/folders/:token", fileController.viewSharedFolder);
+router.get(
+  "/share/folders/:token/:folderId",
+  fileController.viewSharedSubfolder,
+);
 
 export default router;
