@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= file.filename %></title>
+  </head>
+  <body>
+    <a href="/">← Back to My Drive</a>
+
+    <h1><%= file.filename %></h1>
+
+    <p>
+      <strong>Name:</strong>
+      <%= file.filename %>
+    </p>
+
+    <p>
+      <strong>Size:</strong>
+      <%= file.size %> bytes
+    </p>
+
+    <p>
+      <strong>Uploaded:</strong>
+      <%= file.createdAt.toLocaleString() %>
+    </p>
+
+    <a href="<%= file.filepath %>" download>
+      <button>Download</button>
+    </a>
+  </body>
+</html>

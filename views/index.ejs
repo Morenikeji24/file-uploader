@@ -74,8 +74,11 @@
     <ul>
       <% files.forEach(file => { %>
         <li>
-          📄 <%= file.filename %>
-        </li>
+  📄
+  <a href="/files/<%= file.id %>">
+    <%= file.filename %>
+  </a>
+</li>
       <% }) %>
     </ul>
   <% } else { %>
