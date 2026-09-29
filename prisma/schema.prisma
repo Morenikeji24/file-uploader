@@ -38,6 +38,9 @@ model Folder {
   parent   Folder? @relation("FolderHierarchy", fields: [parentId], references: [id])
 
   children Folder[] @relation("FolderHierarchy")
+
+  shareToken     String?   @unique
+  shareExpiresAt DateTime?
 }
 
 model File {
