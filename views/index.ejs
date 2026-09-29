@@ -32,6 +32,12 @@
 
   <h2>Upload File</h2>
 
+  <% if (error) { %>
+  <div class="upload-error">
+    <%= error %>
+  </div>
+<% } %>
+
   <form
     action="/upload"
     method="POST"
